@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button clickers.io</title>
+    <style>
+    body { 
+        font-family: 'Segoe UI', sans-serif; 
+        text-align: center; 
+        transition: 0.5s; 
+        padding-top: 50px;
+        background-color: #f4f7f6;
+    }
+
+    /* This container keeps the buttons in a tidy row */
+    .btn-container { 
+        display: flex; 
+        flex-direction: row; 
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    button { 
+        width: 160px; 
+        height: 60px;
+        font-size: 16px; 
+        font-weight: bold;
+        cursor: pointer; 
+        border: none; 
+        border-radius: 12px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        color: white;
+    }
+
+    button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* NEW: two visually distinct "blocks" */
+    .effect-block {
+        width: min(980px, 92vw);
+        margin: 22px auto;
+        padding: 18px 18px 6px 18px;
+        border-radius: 16px;
+        border: 2px solid rgba(0,0,0,0.08);
+        box-shadow: 0px 10px 25px rgba(0,0,0,0.06);
+        text-align: center;
+    }
+
+    .effect-block .block-title {
+        margin: 0 0 14px 0;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+    }
+
+    /* Sound block theme */
+    .effect-block.sound {
+        background: #fff7e6; /* warm */
+        border-color: rgba(243, 156, 18, 0.35);
+    }
+
+    /* Visual block theme */
+    .effect-block.visual {
+        background: #eef6ff; /* cool */
+        border-color: rgba(52, 152, 219, 0.35);
+    }
+
+    /* Optional: small subtitle text style if you add any later */
+    .block-subtitle {
+        margin: -6px 0 16px 0;
+        color: rgba(0,0,0,0.6);
+        font-size: 14px;
+    }
+    </style>
+</head>
+<body>
+    <h1 title="Welcome to Button clickers.io">Welcome to Button clickers.io</h1>
+
+    <!-- SOUND EFFECT BLOCK -->
+    <div class="effect-block sound">
+        <h2 class="block-title">Sound Effect!</h2>
+
+        <div class="btn-container">
+            <button onclick="playSound()" style="background: #f39c12;">Click Sound</button>
+            <button onclick="playBeepHigh()" style="background: #1abc9c;">High Beep</button>
+            <button onclick="playBeepLow()" style="background: #16a085;">Low Beep</button>
+        </div>
+
+        <div class="btn-container">
+            <button onclick="playBeepSuccess()" style="background: #2ecc71;">Success Ding</button>
+            <button onclick="playBeepError()" style="background: #e74c3c;">Error Buzz</button>
+            <button onclick="playBeepRandom()" style="background: #8e44ad;">Random Beep</button>
+        </div>
+
+        <div class="btn-container">
+            <button onclick="playSound()" style="background: #f39c12;">Play Sound</button>
+        </div>
+    </div>
+
+    <!-- VISUAL EFFECT BLOCK -->
+    <div class="effect-block visual">
+        <h2 class="block-title">Visual Effect!</h2>
+
+        <div class="btn-container">
+            <button onclick="toggleDarkMode()" style="background: #34495e;">Dark Mode</button>
+            <button onclick="shakePage()" style="background: #c0392b;">Shake!</button>
+            <button onclick="rainConfetti()" style="background: #d35400;">Confetti Rain</button>
+        </div>
+
+        <div class="btn-container">
+            <button onclick="changeBg()" style="background: #3498db; color: white;">Color Shift</button>
+            <button onclick="spinTitle()" style="background: #2ecc71; color: white;">Dizzy Text</button>
+            <button onclick="showAlert()" style="background: #e74c3c; color: white;">Secret Message</button>
+        </div>
+
+        <div class="btn-container">
+            <button onclick="launchFireworks()" style="background: #e67e22;">Fireworks!</button>
+            <button onclick="location.href='/secret'" style="background: #9b59b6;">New Page</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <script>
+        function changeBg() {
+            const colors = ['#ffcc00', '#df4b4b', '#18d0ac', '#094ddf', '#8f39b3'];
+            document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function showAlert() {
+            alert("You just clicked a button powered by Flask!");
+        }
+
+        function spinTitle() {
+            const h1 = document.querySelector('h1');
+            h1.style.transition = "transform 1s";
+            h1.style.transform = "rotate(360deg)";
+            setTimeout(() => h1.style.transform = "rotate(0deg)", 1000);
+        }
+
+        const clickAudio = new Audio('/static/mouse_click.mp3');
+
+        function playSound() {
+            clickAudio.currentTime = 0;
+            clickAudio.play().catch(error => {
+                console.error("Playback failed:", error);
+
+                const context = new (window.AudioContext || window.webkitAudioContext)();
+                if (context.state === 'suspended') {
+                    context.resume();
+                }
+
+                const osc = context.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, context.currentTime);
+                osc.connect(context.destination);
+                osc.start();
+                osc.stop(context.currentTime + 0.1);
+            });
+        }
+
+        function playTone(frequency, duration) {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            if (context.state === 'suspended') {
+                context.resume();
+            }
+
+            const osc = context.createOscillator();
+            const gain = context.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(frequency, context.currentTime);
+
+            gain.gain.setValueAtTime(0.0001, context.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.3, context.currentTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration);
+
+            osc.connect(gain);
+            gain.connect(context.destination);
+
+            osc.start();
+            osc.stop(context.currentTime + duration);
+        }
+
+        function playBeepHigh() {
+            playTone(1200, 0.12);
+        }
+
+        function playBeepLow() {
+            playTone(350, 0.18);
+        }
+
+        function playBeepSuccess() {
+            playTone(660, 0.08);
+            setTimeout(() => playTone(990, 0.10), 110);
+        }
+
+        function playBeepError() {
+            playTone(180, 0.10);
+            setTimeout(() => playTone(140, 0.18), 120);
+        }
+
+        function playBeepRandom() {
+            const freq = Math.floor(200 + Math.random() * 1400);
+            const dur = 0.08 + Math.random() * 0.18;
+            playTone(freq, dur);
+        }
+
+        function launchFireworks() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.body.dataset.theme === "dark";
+            if (isDark) {
+                document.body.dataset.theme = "light";
+                document.body.style.backgroundColor = "#f4f7f6";
+                document.body.style.color = "#000";
+            } else {
+                document.body.dataset.theme = "dark";
+                document.body.style.backgroundColor = "#111827";
+                document.body.style.color = "#fff";
+            }
+        }
+
+        function shakePage() {
+            document.body.style.transition = "transform 0.05s";
+            let count = 0;
+
+            const interval = setInterval(() => {
+                const x = (Math.random() - 0.5) * 12;
+                const y = (Math.random() - 0.5) * 12;
+                document.body.style.transform = `translate(${x}px, ${y}px)`;
+                count++;
+
+                if (count > 10) {
+                    clearInterval(interval);
+                    document.body.style.transform = "translate(0px, 0px)";
+                    document.body.style.transition = "transform 0.2s";
+                }
+            }, 50);
+        }
+
+        function rainConfetti() {
+            const duration = 1200;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 4,
+                    spread: 60,
+                    startVelocity: 25,
+                    origin: { x: Math.random(), y: 0 }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            })();
+        }
+    </script>
+</body>
+</html>
