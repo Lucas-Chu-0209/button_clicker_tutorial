@@ -69,11 +69,49 @@
         border-color: rgba(52, 152, 219, 0.35);
     }
 
+    /* NEW: Contact block theme */
+    .effect-block.contact {
+        background: #f3ecff; /* purple tint */
+        border-color: rgba(155, 89, 182, 0.35);
+    }
+
     /* Optional: small subtitle text style if you add any later */
     .block-subtitle {
         margin: -6px 0 16px 0;
         color: rgba(0,0,0,0.6);
         font-size: 14px;
+    }
+
+    /* NEW: Contact info layout */
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin: 6px auto 18px auto;
+        width: min(760px, 92vw);
+        text-align: left;
+    }
+
+    .contact-item {
+        background: rgba(255,255,255,0.65);
+        border: 1px solid rgba(0,0,0,0.06);
+        border-radius: 12px;
+        padding: 12px 14px;
+    }
+
+    .contact-label {
+        font-weight: 800;
+        margin-right: 8px;
+    }
+
+    .contact-item a {
+        color: #5b2c83;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .contact-item a:hover {
+        text-decoration: underline;
     }
     </style>
 </head>
@@ -123,6 +161,49 @@
             <button onclick="launchFireworks()" style="background: #e67e22;">Fireworks!</button>
             <button onclick="location.href='secret.html'" style="background: #9b59b6;">New Page</button>
             <button onclick="pulseTitle()" style="background: #27ae60;">Pulse Title</button>
+        </div>
+    </div>
+
+    <!-- CONTACT ME BLOCK -->
+    <div class="effect-block contact">
+        <h2 class="block-title">Contact Me</h2>
+        <p class="block-subtitle">Feel free to reach out — links open in a new tab.</p>
+
+        <div class="contact-grid">
+            <div class="contact-item">
+                <span class="contact-label">Name:</span>
+                <span>Lucas Chu</span>
+            </div>
+
+            <div class="contact-item">
+                <span class="contact-label">Email:</span>
+                <a href="mailto:lucas@example.com">lucas@example.com</a>
+            </div>
+
+            <div class="contact-item">
+                <span class="contact-label">Phone:</span>
+                <a href="tel:+1234567890">+1 (234) 567-890</a>
+            </div>
+
+            <div class="contact-item">
+                <span class="contact-label">GitHub:</span>
+                <a href="https://github.com/Lucas-Chu-0209" target="_blank" rel="noopener noreferrer">github.com/Lucas-Chu-0209</a>
+            </div>
+
+            <div class="contact-item">
+                <span class="contact-label">LinkedIn:</span>
+                <a href="https://www.linkedin.com/in/your-linkedin/" target="_blank" rel="noopener noreferrer">linkedin.com/in/your-linkedin</a>
+            </div>
+
+            <div class="contact-item">
+                <span class="contact-label">Instagram:</span>
+                <a href="https://www.instagram.com/your-instagram/" target="_blank" rel="noopener noreferrer">instagram.com/your-instagram</a>
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <button onclick="copyEmail()" style="background: #9b59b6;">Copy Email</button>
+            <button onclick="scrollToTop()" style="background: #8e44ad;">Back to Top</button>
         </div>
     </div>
 
@@ -311,6 +392,20 @@
             h1.style.transition = "transform 0.15s";
             h1.style.transform = "scale(1.12)";
             setTimeout(() => h1.style.transform = "scale(1)", 180);
+        }
+
+        function copyEmail() {
+            const email = "lucas@example.com";
+            navigator.clipboard.writeText(email).then(() => {
+                alert("Email copied: " + email);
+            }).catch(error => {
+                console.error("Copy failed:", error);
+                alert("Copy failed. Email: " + email);
+            });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
     </script>
 </body>
