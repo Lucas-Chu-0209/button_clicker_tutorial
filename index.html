@@ -98,6 +98,8 @@
 
         <div class="btn-container">
             <button onclick="playSound()" style="background: #f39c12;">Play Sound</button>
+            <button onclick="playBeepWave()" style="background: #2980b9;">Beep Wave</button>
+            <button onclick="playBeepLaser()" style="background: #7f8c8d;">Laser Zap</button>
         </div>
     </div>
 
@@ -120,6 +122,7 @@
         <div class="btn-container">
             <button onclick="launchFireworks()" style="background: #e67e22;">Fireworks!</button>
             <button onclick="location.href='secret.html'" style="background: #9b59b6;">New Page</button>
+            <button onclick="pulseTitle()" style="background: #27ae60;">Pulse Title</button>
         </div>
     </div>
 
@@ -210,6 +213,42 @@
             playTone(freq, dur);
         }
 
+        function playBeepWave() {
+            let i = 0;
+            const notes = [420, 520, 620, 720, 820, 720, 620, 520];
+            const interval = setInterval(() => {
+                playTone(notes[i], 0.06);
+                i++;
+                if (i >= notes.length) {
+                    clearInterval(interval);
+                }
+            }, 75);
+        }
+
+        function playBeepLaser() {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            if (context.state === 'suspended') {
+                context.resume();
+            }
+
+            const osc = context.createOscillator();
+            const gain = context.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(1400, context.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(220, context.currentTime + 0.18);
+
+            gain.gain.setValueAtTime(0.0001, context.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.25, context.currentTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.18);
+
+            osc.connect(gain);
+            gain.connect(context.destination);
+
+            osc.start();
+            osc.stop(context.currentTime + 0.18);
+        }
+
         function launchFireworks() {
             confetti({
                 particleCount: 150,
@@ -265,6 +304,13 @@
                     requestAnimationFrame(frame);
                 }
             })();
+        }
+
+        function pulseTitle() {
+            const h1 = document.querySelector('h1');
+            h1.style.transition = "transform 0.15s";
+            h1.style.transform = "scale(1.12)";
+            setTimeout(() => h1.style.transform = "scale(1)", 180);
         }
     </script>
 </body>
